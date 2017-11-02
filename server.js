@@ -9,6 +9,8 @@ var fs = require('fs');
 var express = require('express');
 var app = express();
 
+const TYPE = { UNIX: 0, PARSED_TIME: 1, TODAY: 2 }
+
 if (!process.env.DISABLE_XORIGIN) {
   app.use(function (req, res, next) {
     var allowedOrigins = ['https://narrow-plane.gomix.me', 'https://www.freecodecamp.com'];
@@ -39,6 +41,38 @@ app.route('/')
   })
 
 // get and return time
+app.get('/:time', (req, res) => {
+  console.log('hello worldxxx')
+  let date = req.params.times
+  let response = {}
+  switch (getType(date)) {
+    case TYPE.TODAY:
+      let today = new Date()
+      response.parsedTime = today
+      response.unixtime = today.getTime()
+      break
+    case TYPE.PARSED_TIME:
+      response.parsedTime = date
+      response.unixtime = new Date(date).getTime() || 'date not found'
+      break
+    default:
+      console.log('testing')
+      response.unixtime = date
+      response.parsedTime = (new Date(+date)).toDateString()
+      break
+  }
+  res.json(response)
+})
+
+function getType (date) {
+  if (date.toString().toLowerCase() === 'today') {
+    return TYPE.TODAY
+  }
+  if (date.toString().match(/[a-z]/i)) {
+    return TYPE.PARSED_TIME
+  }
+  return TYPE.UNIX
+}
 
 // Respond not found to all the wrong routes
 app.use(function (req, res, next) {
