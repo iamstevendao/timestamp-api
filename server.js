@@ -42,19 +42,21 @@ app.route('/')
 
 // get and return time
 app.get('/:time', (req, res) => {
+  // get the request param
   let date = req.params.time
   let response = {}
+  // get the type of requested date and do stuff
   switch (getType(date)) {
-    case TYPE.TODAY:
+    case TYPE.TODAY: // today
       let today = new Date()
       response.parsedTime = today
       response.unixtime = today.getTime()
       break
-    case TYPE.PARSED_TIME:
+    case TYPE.PARSED_TIME: // request is a string of date
       response.parsedTime = date
       response.unixtime = new Date(date).getTime() || 'date not found'
       break
-    default:
+    default: // request is an unix time
       response.unixtime = date
       response.parsedTime = (new Date(+date)).toDateString()
       break
@@ -63,12 +65,15 @@ app.get('/:time', (req, res) => {
 })
 
 function getType (date) {
+  // check if string is today
   if (date.toString().toLowerCase() === 'today') {
     return TYPE.TODAY
   }
+  // check if string contains letter => parsed time
   if (date.toString().match(/[a-z]/i)) {
     return TYPE.PARSED_TIME
   }
+  // otherwise returns unix
   return TYPE.UNIX
 }
 
