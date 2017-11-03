@@ -5,7 +5,10 @@ body {
 	font-size: 16px;
 	color: #222;
 	background-color: #ECF0F1;
-	text-align: center;
+}
+
+h1, h3 {
+  text-align: center
 }
 
 .container {
